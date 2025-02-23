@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Створення BINGO
 
 # Серія вимог 1 (17 лютого 2025 року)
@@ -22,3 +23,6 @@
   * [localStorage](https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage)
   * [JSON.stringify](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify)
   * [JSON.parse](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/parse)
+=======
+# bingo-classwork
+>>>>>>> d770a3cf57b145082bd9247dd0e0a7e1a24154ce
