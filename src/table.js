@@ -1,10 +1,12 @@
 function checkWin(table) {
   const rows = table.querySelectorAll("tr");
+  const num = rows.length;
 
-  for (let i = 0; i < rows.length; i++) {
+
+  for (let i = 0; i < num; i++) {
     let win = true;
     const cells = rows[i].querySelectorAll("td");
-    for (let j = 0; j < cells.length; j++) {
+    for (let j = 0; j < num; j++) {
       if (!cells[j].classList.contains("selected")) {
         win = false;
         break;
@@ -12,15 +14,14 @@ function checkWin(table) {
     }
     if (win) {
       alert("BINGO");
+      document.querySelector(".bingo").hidden = false;
       return;
     }
   }
 
-  const num = rows.length;
 
   for (let i = 0; i < num; i++) {
     let win = true;
-
     for (let j = 0; j < num; j++) {
       const cell = rows[j].querySelectorAll("td")[i];
       if (!cell.classList.contains("selected")) {
@@ -33,6 +34,35 @@ function checkWin(table) {
       document.querySelector(".bingo").hidden = false;
       return;
     }
+  }
+
+
+  let mainDiagonalWin = true;
+  for (let i = 0; i < num; i++) {
+    const cell = rows[i].querySelectorAll("td")[i];
+    if (!cell.classList.contains("selected")) {
+      mainDiagonalWin = false;
+      break;
+    }
+  }
+  if (mainDiagonalWin) {
+    alert("BINGO");
+    document.querySelector(".bingo").hidden = false;
+    return;
+  }
+
+  let secondaryDiagonalWin = true;
+  for (let i = 0; i < num; i++) {
+    const cell = rows[i].querySelectorAll("td")[num - 1 - i];
+    if (!cell.classList.contains("selected")) {
+      secondaryDiagonalWin = false;
+      break;
+    }
+  }
+  if (secondaryDiagonalWin) {
+    alert("BINGO");
+    document.querySelector(".bingo").hidden = false;
+    return;
   }
 }
 
@@ -64,9 +94,31 @@ export function generateTable(num) {
   return table;
 }
 
-export function resetBingo(num){
+
+function resetBingo() {
   document.querySelector(".bingo").hidden = true;
   const tableContainer = document.getElementById("table");
   tableContainer.innerHTML = "";
-  tableContainer.appendChild(generateTable(num));
+  tableContainer.appendChild(generateTable(5)); 
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+  const tableContainer = document.getElementById("table");
+  if (tableContainer) {
+    tableContainer.appendChild(generateTable(5)); 
+  } else {
+    console.error("Ошибка: контейнер #table не найден.");
+  }
+
+  const resetButton = document.querySelector(".bingo input[type='submit']");
+  if (resetButton) {
+    resetButton.addEventListener("click", (event) => {
+      event.preventDefault(); 
+      resetBingo();
+    });
+  }
+
+
+  
+}
+);
