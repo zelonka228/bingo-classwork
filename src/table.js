@@ -1,3 +1,31 @@
+const state = {
+  texts: ["тест", "foo"],
+  selected:[],
+  isAuthorMode: false,
+  currentlyEditing: null,
+};
+
+export function rende(table){
+  const tableElement = table ?? document.querySelector("table");
+  const cells = [...table.querySelectorAll("tb")];
+  state.texts.forEach((text, index) => {
+    cells[idnex].textContent = text ?? index;
+  });
+
+cells.forEach((cell, idx) => {
+  if (state.selected.includes(idx)){
+    cell.classList.add("selected");
+  } else {
+    cell.classList.remove("selected");
+  }
+  if (state.isAuthorMode && state.currentlyEditing === idx){
+    alert("TextArea")
+  }
+});
+}
+
+
+
 function checkWin(table) {
   const rows = table.querySelectorAll("tr");
   const num = rows.length;
@@ -66,35 +94,6 @@ function checkWin(table) {
   }
 }
 
-
-
-export function generateTable(num) {
-  const table = document.createElement("table");
-  const tbody = document.createElement("tbody");
-  table.appendChild(tbody);
-
-  for (let i = 0; i < num; i++) {
-    const tr = document.createElement("tr");
-    for (let j = 0; j < num; j++) {
-      const td = document.createElement("td");
-      td.textContent = i * num + j;
-      tr.appendChild(td);
-
-      td.addEventListener("click", () => {
-   
-        td.classList.toggle("selected");
-
-        checkWin(table);
-        
-      });
-    }
-    tbody.appendChild(tr);
-  }
-
-  return table;
-}
-
-
 function resetBingo() {
   document.querySelector(".bingo").hidden = true;
   const tableContainer = document.getElementById("table");
@@ -105,7 +104,7 @@ function resetBingo() {
 document.addEventListener("DOMContentLoaded", () => {
   const tableContainer = document.getElementById("table");
   if (tableContainer) {
-    tableContainer.appendChild(generateTable(5)); 
+    
   } else {
     console.error("Ошибка: контейнер #table не найден.");
   }
@@ -119,6 +118,45 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 
-  
+
 }
 );
+
+export function generateTable(num) {
+  const table = document.createElement("table");
+  const tbody = document.createElement("tbody");
+  table.appendChild(tbody);
+
+  for (let i = 0; i < num; i++) {
+    const tr = document.createElement("tr");
+    for (let j = 0; j < num; j++) {
+      const td = document.createElement("td");
+      td.textContent = i * num + j;
+      td.addEventListener("click", () => handleCellClick(i * num + j))
+      tr.appendChild(td);
+
+      td.addEventListener("click", () => {
+   
+        td.classList.toggle("selected");
+
+        checkWin(table);
+        
+      });
+    }
+    tbody.appendChild(tr);
+  }
+  
+  return table;
+}
+
+function handleCellClick(idx){
+  if (state.isAuthorMode){
+    state.currentlyEditing = idx;
+  } else {
+    if (!state.selected.includes(idx)){
+      state.selected.push(idx);
+    }else {
+      state.selected = state.selected.filter((item) => i != idx)
+    }
+  }
+}
