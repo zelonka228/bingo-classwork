@@ -1,40 +1,50 @@
-import { state, winConditionMet, handleCellClick, saveStateToHash, loadStateFromHash, hasError } from "./logic.js";
+import {
+  state,
+  winConditionMet,
+  handleCellClick,
+  saveStateToHash,
+  loadStateFromHash,
+  hasError,
+} from "./logic.js";
 
-  export function render(table) {
+export function render(table) {
   const tableElement = table ?? document.querySelector("table");
   const cells = [...tableElement.querySelectorAll("td")];
 
   cells.forEach((cell, idx) => {
     cell.textContent = state.texts[idx] ?? idx;
-    
+
     adjustFontSize(cell);
     //setTimeout(() => adjustFontSize(cell), 0);
-    
-
 
     if (state.texts[idx] === "*" && !state.selected.includes(idx)) {
       state.selected.push(idx);
     }
 
     const authorSwitcher = document.querySelector(".author-switcher");
-    
-   
+
     if (state.isAuthorMode) {
       if (!document.querySelector(".share-button")) {
         const shareButton = document.createElement("button");
         shareButton.textContent = "Поділитися";
         shareButton.classList.add("share-button");
-  
+
         shareButton.addEventListener("click", () => {
-          const encodedState = btoa(unescape(encodeURIComponent(JSON.stringify(state))));
+          const encodedState = btoa(
+            unescape(encodeURIComponent(JSON.stringify(state))),
+          );
           console.log(encodedState);
-          const url = '${window.location.origin}${window.location.pathname}#${encodedState}';
-        
-          navigator.clipboard.writeText(url)
+          const url =
+            "${window.location.origin}${window.location.pathname}#${encodedState}";
+
+          navigator.clipboard
+            .writeText(url)
             .then(() => alert("Посилання скопійовано!"))
-            .catch(err => console.error("Не вдалося скопіювати посилання", err));
+            .catch((err) =>
+              console.error("Не вдалося скопіювати посилання", err),
+            );
         });
-  
+
         authorSwitcher.appendChild(shareButton);
       }
     } else {
@@ -43,7 +53,6 @@ import { state, winConditionMet, handleCellClick, saveStateToHash, loadStateFrom
         shareButton.remove();
       }
     }
-   
 
     cell.classList.toggle("selected", state.selected.includes(idx));
 
@@ -60,24 +69,26 @@ import { state, winConditionMet, handleCellClick, saveStateToHash, loadStateFrom
       textarea.focus();
     }
 
-    
     cell.classList.toggle("error", hasError(idx));
     //console.log("error", hasError(idx), idx);
   });
 
-  document.querySelector(".bingo").toggleAttribute("hidden", !winConditionMet());
+  document
+    .querySelector(".bingo")
+    .toggleAttribute("hidden", !winConditionMet());
 
   saveStateToHash();
   updateFavicon();
 }
 
-
-  function updateFavicon() {
+function updateFavicon() {
   let color = "yellow";
   if (winConditionMet()) color = "green";
   else {
-    const hasErrors = state.texts.some((text) =>
-      (text && state.texts.filter((t) => t === text).length > 1) || (text && text.length > 50)
+    const hasErrors = state.texts.some(
+      (text) =>
+        (text && state.texts.filter((t) => t === text).length > 1) ||
+        (text && text.length > 50),
     );
     if (hasErrors) color = "red";
   }
@@ -92,7 +103,6 @@ import { state, winConditionMet, handleCellClick, saveStateToHash, loadStateFrom
   const favicon = document.querySelector("link[rel='icon']");
   favicon.href = canvas.toDataURL();
 }
-
 
 export function generateTable(num) {
   const table = document.createElement("table");
@@ -114,12 +124,13 @@ export function generateTable(num) {
     tbody.appendChild(tr);
   }
 
-  document.querySelector('form[action="#new"]').addEventListener("submit", (e) => {
-    e.preventDefault();
-    state.selected.length = 0;
-    render();
-  });
-
+  document
+    .querySelector('form[action="#new"]')
+    .addEventListener("submit", (e) => {
+      e.preventDefault();
+      state.selected.length = 0;
+      render();
+    });
 
   loadStateFromHash();
   render(table);
@@ -132,38 +143,30 @@ document.querySelector(".switch input").addEventListener("change", (e) => {
   render();
 });
 
-
-
 function adjustFontSize(cell) {
-  const minFontSize = 5;  
-  const maxFontSize = 30; 
+  const minFontSize = 5;
+  const maxFontSize = 30;
   let fontSize = minFontSize;
-  
- 
-  cell.style.fontSize = `${fontSize}px`;
 
+  cell.style.fontSize = `${fontSize}px`;
 
   const cellWidth = cell.offsetWidth;
   const cellHeight = cell.offsetHeight;
-
 
   function doesTextFit() {
     const textRect = cell.getBoundingClientRect();
     return textRect.width <= cellWidth && textRect.height <= cellHeight;
   }
 
-
   while (fontSize < maxFontSize) {
     fontSize++;
     cell.style.fontSize = `${fontSize}px`;
-    
 
     if (!doesTextFit()) {
-      fontSize--;  
+      fontSize--;
       break;
     }
   }
-  
+
   cell.style.fontSize = `${fontSize}px`;
 }
-
